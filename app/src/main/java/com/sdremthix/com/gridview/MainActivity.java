@@ -6,14 +6,17 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 
-import com.sdremthix.com.gridview.domain.GridLine;
 import com.sdremthix.com.gridview.domain.GridProperties;
+import com.sdremthix.com.gridview.domain.KDSearchTree;
 import com.sdremthix.com.gridview.view.ObjectDraw;
+
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,6 +37,24 @@ public class MainActivity extends AppCompatActivity {
                 false,
                 false
         ));
+
+        //Test Nearest Neighbor
+        float[][] gridPoints = new float[][]{
+                {50, 50, 1},
+                {80, 40, 2},
+                {10, 60, 3},
+                {51, 38, 4},
+                {48, 38, 5}
+        };
+
+        KDSearchTree kdSearchTree = new KDSearchTree(2);
+        for (float[] point : gridPoints) {
+            KDSearchTree.Node node = new KDSearchTree.Node(Arrays.asList(point[0], point[1]));
+            kdSearchTree.add(node);
+        }
+
+        Log.d("SRKI", "onCreate: TREE: " + kdSearchTree.toString());
+        Log.d("SRKI", "Najbliza tacka: " + kdSearchTree.findNearestNeighbor(new KDSearchTree.NodePoint(Arrays.asList(40f, 40f))));
     }
 
     public static Bitmap getBitmapFromVectorDrawable(Context context, int drawableId) {
