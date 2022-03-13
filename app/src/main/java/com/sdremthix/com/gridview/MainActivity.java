@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         objectDraw.setBitmapImage(image);
         objectDraw.drawGrid(new GridProperties(
                 null,
-                2, 2,
+                10, 3,
                 true,
                 true,
                 false,
@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
             kdSearchTree.add(node);
         }
 
-        Log.d("SRKI", "onCreate: TREE: " + kdSearchTree.toString());
+        Log.d("SRKI", "onCreate: TREE: " + kdSearchTree);
         Log.d("SRKI", "Najbliza tacka: " + kdSearchTree.findNearestNeighbor(new KDSearchTree.NodePoint(Arrays.asList(40f, 40f))));
     }
 

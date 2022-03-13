@@ -44,6 +44,10 @@ public final class KDSearchTree {
             }
         }
 
+        public NodePoint getNodePoint() {
+            return nodePoint;
+        }
+
         @Override
         public String toString() {
             return "Node node point data: " + this.nodePoint.toString();
@@ -114,6 +118,10 @@ public final class KDSearchTree {
         } else {
             root.add(node);
         }
+    }
+
+    public boolean isEmpty() {
+        return root == null;
     }
 
     /**

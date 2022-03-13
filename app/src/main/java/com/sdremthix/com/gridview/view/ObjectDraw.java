@@ -15,9 +15,11 @@ import androidx.annotation.Nullable;
 
 import com.sdremthix.com.gridview.domain.GridLine;
 import com.sdremthix.com.gridview.domain.GridProperties;
+import com.sdremthix.com.gridview.domain.KDSearchTree;
 import com.sdremthix.com.gridview.domain.LinePoint;
 import com.sdremthix.com.gridview.domain.Pair;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,7 +39,9 @@ public final class ObjectDraw extends View {
     @Nullable
     private GridProperties gridProperties;
 
+    private KDSearchTree searchTree = new KDSearchTree(2);
     private Map<LinePoint, Pair<GridLine, GridLine>> grid = new HashMap<>();
+
 
     public ObjectDraw(Context context) {
         super(context);
@@ -89,8 +93,12 @@ public final class ObjectDraw extends View {
 
                         //calculate intersection point
                         LinePoint intersection = getIntersectionPoint(horizontalStart, horizontalEnd, verticalStart, verticalEnd);
-                        //store lineintersection in map
-                        grid.put(intersection, new Pair<>(horizontal, vertical));
+                        if (intersection != null) {
+                            final KDSearchTree.Node node = new KDSearchTree.Node(Arrays.asList(intersection.getXPos(), intersection.getYPos()));
+                            //store line intersection in map
+                            grid.put(intersection, new Pair<>(horizontal, vertical));
+                            searchTree.add(node);
+                        }
 
                         //add horizontal line
                         startWidth += spacingWidth;
@@ -109,15 +117,21 @@ public final class ObjectDraw extends View {
 
 
             if (gridProperties.isSnapToGrid() && !isMoving) {
-                Log.d("SRKI", "onDraw: MRSKBJKDHkjGHDKJGFEJ");
+                Log.d("SRKI", "onDraw: " + searchTree.toString());
 
                 LinePoint isSnap = new LinePoint(mPosX, mPosY);
-                if (grid.containsKey(isSnap)) {
-                    Log.d("SRKI", "onDraw: MRSKBJKDHkjGHDKJGFEJ");
-                    Pair<GridLine, GridLine> lines = grid.get(isSnap);
-                    mPosX = lines.getFirst().getStartPoint().getXPos();
-                    mPosY = lines.getSecond().getStartPoint().getYPos();
+                final KDSearchTree.Node nearestPoint = searchTree.findNearestNeighbor(new KDSearchTree.NodePoint(Arrays.asList(mPosX, mPosY)));
+                if (nearestPoint != null && isInThreshold(nearestPoint.getNodePoint(),mPosX,mPosY)) {
+                    mPosX = nearestPoint.getNodePoint().get(0);
+                    mPosY = nearestPoint.getNodePoint().get(1);
                 }
+
+//                if (grid.containsKey(isSnap)) {
+//                    Log.d("SRKI", "onDraw: MRSKBJKDHkjGHDKJGFEJ");
+//                    Pair<GridLine, GridLine> lines = grid.get(isSnap);
+//                    mPosX = lines.getFirst().getStartPoint().getXPos();
+//                    mPosY = lines.getSecond().getStartPoint().getYPos();
+//                }
             }
         }
 
@@ -125,6 +139,19 @@ public final class ObjectDraw extends View {
             canvas.drawBitmap(bitmapImage, mPosX, mPosY, this.bitmapPaint);
         }
 
+    }
+
+    private boolean isInThreshold(@NonNull KDSearchTree.NodePoint nodePoint, float x, float y) {
+        boolean result;
+        Log.d("SRKI", "isInThreshold: " + x);
+        final float xThreshold = x + (x / 100 * 10);
+        Log.d("SRKI", "isInThreshold: " + xThreshold);
+
+        Log.d("SRKI", "isInThreshold: " + y);
+        final float yThreshold = y + (y / 100 * 10);
+        Log.d("SRKI", "isInThreshold: " + yThreshold);
+
+        return nodePoint.get(0) <= xThreshold && nodePoint.get(1) <= yThreshold;
     }
 
     private void init() {
@@ -196,19 +223,32 @@ public final class ObjectDraw extends View {
     /**
      * P(li,l2)
      *
-     * @param l1a
-     * @param l1b
-     * @param l2a
-     * @param l2b
+     * @param l1a x1,y1
+     * @param l1b x2,y2
+     * @param l2a x3,y3
+     * @param l2b x4,y4
      * @return
      */
     private LinePoint getIntersectionPoint(LinePoint l1a, LinePoint l1b, LinePoint l2a, LinePoint l2b) {
-        int thresholdPercentage = 10;
-        float a = (l1a.getXPos() * l1b.getYPos() - l1a.getYPos() * l1b.getXPos());
-        float b = (l2a.getXPos() * l2b.getYPos() - l2a.getYPos() * l2b.getXPos());
-        float determinant = (l1a.getXPos() - l1b.getXPos()) * (l2a.getYPos() - l2b.getYPos()) - (l1a.getYPos() - l1b.getYPos()) * (l2a.getXPos() - l2b.getXPos());
-        float x = (a * (l2a.getXPos() - l2b.getXPos()) - (l1a.getXPos() - l1b.getXPos()) * b) / determinant;
-        float y = (a * (l2a.getYPos()) - l2b.getYPos() - (l1a.getYPos() - l1b.getYPos()) * b);
-        return new LinePoint(x + (x / 100 * thresholdPercentage), y + (y / 100 * thresholdPercentage));
+
+        float x1 = l1a.getXPos();
+        float y1 = l1a.getYPos();
+        float x2 = l1b.getXPos();
+        float y2 = l1b.getYPos();
+        float x3 = l2a.getXPos();
+        float y3 = l2a.getYPos();
+        float x4 = l2b.getXPos();
+        float y4 = l2b.getYPos();
+
+
+        float a = (x1 * y2 - y1 * x2);
+        float b = (x3 * y4 - y3 * x4);
+        float determinant = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+        if (determinant == 0) {
+            return null;
+        }
+        float x = (a * (x3 - x4) - (x1 - x2) * b) / determinant;
+        float y = (a * (y3 - y4) - (y1 - y2) * b) / determinant;
+        return new LinePoint(x, y);
     }
 }
