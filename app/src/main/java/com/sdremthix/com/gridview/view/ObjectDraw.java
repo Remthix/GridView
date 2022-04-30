@@ -19,11 +19,14 @@ import com.sdremthix.com.gridview.domain.KDSearchTree;
 import com.sdremthix.com.gridview.domain.LinePoint;
 import com.sdremthix.com.gridview.domain.Pair;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public final class ObjectDraw extends View {
+    public static final String TAG = "SRKI";
     private float mPosX, mPosY, xMove, yMove;
     private int pointerID;
     private boolean isMoving;
@@ -67,72 +70,7 @@ public final class ObjectDraw extends View {
     protected void onDraw(Canvas canvas) {
         if (this.gridProperties != null) {
 
-            gridPaint.setStrokeWidth(3);
-            gridPaint.setColor(Color.RED);
-            if (grid.isEmpty()) {
-                int width = getWidth();
-                int height = getHeight();
-
-                int spacingWidth = width / this.gridProperties.getColumns();
-                int spacingHeight = height / this.gridProperties.getRows();
-
-                int startWidth = 0;
-                int startHeight = 0;
-                for (int i = 0; i < this.gridProperties.getColumns(); i++) {
-                    for (int j = 0; j < this.gridProperties.getRows(); j++) {
-
-                        //draw horizontal
-                        LinePoint horizontalStart = new LinePoint(0, startHeight);
-                        LinePoint horizontalEnd = new LinePoint(width, startHeight);
-                        GridLine horizontal = new GridLine(horizontalStart, horizontalEnd, "" + gridPaint.getColor(), gridPaint.getStrokeWidth());
-
-                        //draw vertical
-                        LinePoint verticalStart = new LinePoint(startWidth, 0);
-                        LinePoint verticalEnd = new LinePoint(startWidth, height);
-                        GridLine vertical = new GridLine(verticalStart, verticalEnd, "" + gridPaint.getColor(), gridPaint.getStrokeWidth());
-
-                        //calculate intersection point
-                        LinePoint intersection = getIntersectionPoint(horizontalStart, horizontalEnd, verticalStart, verticalEnd);
-                        if (intersection != null) {
-                            final KDSearchTree.Node node = new KDSearchTree.Node(Arrays.asList(intersection.getXPos(), intersection.getYPos()));
-                            //store line intersection in map
-                            grid.put(intersection, new Pair<>(horizontal, vertical));
-                            searchTree.add(node);
-                        }
-
-                        //add horizontal line
-                        startWidth += spacingWidth;
-                        startHeight += spacingHeight;
-                    }
-                }
-            }
-            //draw grid
-            for (Map.Entry<LinePoint, Pair<GridLine, GridLine>> mapEntry : grid.entrySet()) {
-                //Horizontal
-                canvas.drawLine(mapEntry.getValue().getFirst().getStartPoint().getXPos(), mapEntry.getValue().getFirst().getStartPoint().getYPos(), mapEntry.getValue().getFirst().getEndPoint().getXPos(), mapEntry.getValue().getFirst().getEndPoint().getYPos(), gridPaint);
-                //Vertical
-                canvas.drawLine(mapEntry.getValue().getSecond().getStartPoint().getXPos(), mapEntry.getValue().getSecond().getStartPoint().getYPos(), mapEntry.getValue().getSecond().getEndPoint().getXPos(), mapEntry.getValue().getSecond().getEndPoint().getYPos(), gridPaint);
-
-            }
-
-
-            if (gridProperties.isSnapToGrid() && !isMoving) {
-                Log.d("SRKI", "onDraw: " + searchTree.toString());
-
-                LinePoint isSnap = new LinePoint(mPosX, mPosY);
-                final KDSearchTree.Node nearestPoint = searchTree.findNearestNeighbor(new KDSearchTree.NodePoint(Arrays.asList(mPosX, mPosY)));
-                if (nearestPoint != null && isInThreshold(nearestPoint.getNodePoint(),mPosX,mPosY)) {
-                    mPosX = nearestPoint.getNodePoint().get(0);
-                    mPosY = nearestPoint.getNodePoint().get(1);
-                }
-
-//                if (grid.containsKey(isSnap)) {
-//                    Log.d("SRKI", "onDraw: MRSKBJKDHkjGHDKJGFEJ");
-//                    Pair<GridLine, GridLine> lines = grid.get(isSnap);
-//                    mPosX = lines.getFirst().getStartPoint().getXPos();
-//                    mPosY = lines.getSecond().getStartPoint().getYPos();
-//                }
-            }
+            drawGridOnCanvas(this.gridProperties, canvas);
         }
 
         if (bitmapImage != null) {
@@ -141,15 +79,93 @@ public final class ObjectDraw extends View {
 
     }
 
-    private boolean isInThreshold(@NonNull KDSearchTree.NodePoint nodePoint, float x, float y) {
-        boolean result;
-        Log.d("SRKI", "isInThreshold: " + x);
-        final float xThreshold = x + (x / 100 * 10);
-        Log.d("SRKI", "isInThreshold: " + xThreshold);
+    private void drawGridOnCanvas(final GridProperties gridProperties, final Canvas canvas) {
+        gridPaint.setStrokeWidth(3);
+        gridPaint.setColor(Color.RED);
+        //Calculate new grid
+        if (grid.isEmpty()) {
+            int width = getWidth();
+            int height = getHeight();
 
-        Log.d("SRKI", "isInThreshold: " + y);
+            int spacingWidth = width / gridProperties.getColumns();
+            int spacingHeight = height / gridProperties.getRows();
+
+            int startWidth = 0;
+            int startHeight = 0;
+            List<GridLine> tempLineData = new ArrayList<>();
+            for (int i = 0; i < gridProperties.getColumns(); i++) {
+                for (int j = 0; j < gridProperties.getRows(); j++) {
+
+                    //draw horizontal
+                    LinePoint horizontalStart = new LinePoint(0, startHeight);
+                    LinePoint horizontalEnd = new LinePoint(width, startHeight);
+                    GridLine horizontal = new GridLine(horizontalStart, horizontalEnd, "" + gridPaint.getColor(), gridPaint.getStrokeWidth());
+
+                    //draw vertical
+                    LinePoint verticalStart = new LinePoint(startWidth, 0);
+                    LinePoint verticalEnd = new LinePoint(startWidth, height);
+                    GridLine vertical = new GridLine(verticalStart, verticalEnd, "" + gridPaint.getColor(), gridPaint.getStrokeWidth());
+
+                    tempLineData.add(horizontal);
+                    tempLineData.add(vertical);
+
+                    //Update spacings
+                    startWidth += spacingWidth;
+                    startHeight += spacingHeight;
+                }
+            }
+
+            for (GridLine gridLine : tempLineData) {
+                for (GridLine otherLine : tempLineData) {
+                    if (gridLine != otherLine) {
+                        //calculate intersection point
+                        LinePoint intersection = getIntersectionPoint(gridLine.getStartPoint(), gridLine.getEndPoint(), otherLine.getStartPoint(), otherLine.getEndPoint());
+                        if (intersection != null) {
+                            final KDSearchTree.Node node = new KDSearchTree.Node(Arrays.asList(intersection.getXPos(), intersection.getYPos()));
+                            //store line intersection in map
+                            grid.put(intersection, new Pair<>(gridLine, otherLine));
+                            searchTree.add(node);
+                        }
+                    }
+                }
+            }
+        }
+        //draw grid
+        for (Map.Entry<LinePoint, Pair<GridLine, GridLine>> mapEntry : grid.entrySet()) {
+            //Horizontal
+            canvas.drawLine(mapEntry.getValue().getFirst().getStartPoint().getXPos(), mapEntry.getValue().getFirst().getStartPoint().getYPos(), mapEntry.getValue().getFirst().getEndPoint().getXPos(), mapEntry.getValue().getFirst().getEndPoint().getYPos(), gridPaint);
+            //Vertical
+            canvas.drawLine(mapEntry.getValue().getSecond().getStartPoint().getXPos(), mapEntry.getValue().getSecond().getStartPoint().getYPos(), mapEntry.getValue().getSecond().getEndPoint().getXPos(), mapEntry.getValue().getSecond().getEndPoint().getYPos(), gridPaint);
+        }
+
+
+        if (gridProperties.isSnapToGrid() && !isMoving) {
+            Log.d(TAG, "onDraw: " + searchTree.toString());
+
+            LinePoint isSnap = new LinePoint(mPosX, mPosY);
+            final KDSearchTree.Node nearestPoint = searchTree.findNearestNeighbor(new KDSearchTree.NodePoint(Arrays.asList(mPosX, mPosY)));
+            if (nearestPoint != null && isInThreshold(nearestPoint.getNodePoint(), mPosX, mPosY)) {
+                mPosX = nearestPoint.getNodePoint().get(0);
+                mPosY = nearestPoint.getNodePoint().get(1);
+            }
+
+//                if (grid.containsKey(isSnap)) {
+//                    Log.d("SRKI", "onDraw: MRSKBJKDHkjGHDKJGFEJ");
+//                    Pair<GridLine, GridLine> lines = grid.get(isSnap);
+//                    mPosX = lines.getFirst().getStartPoint().getXPos();
+//                    mPosY = lines.getSecond().getStartPoint().getYPos();
+//                }
+        }
+    }
+
+    private boolean isInThreshold(@NonNull KDSearchTree.NodePoint nodePoint, float x, float y) {
+        Log.d(TAG, "isInThreshold: " + x);
+        final float xThreshold = x + (x / 100 * 10);
+        Log.d(TAG, "isInThreshold: " + xThreshold);
+
+        Log.d(TAG, "isInThreshold: " + y);
         final float yThreshold = y + (y / 100 * 10);
-        Log.d("SRKI", "isInThreshold: " + yThreshold);
+        Log.d(TAG, "isInThreshold: " + yThreshold);
 
         return nodePoint.get(0) <= xThreshold && nodePoint.get(1) <= yThreshold;
     }
@@ -223,32 +239,67 @@ public final class ObjectDraw extends View {
     /**
      * P(li,l2)
      *
-     * @param l1a x1,y1
-     * @param l1b x2,y2
-     * @param l2a x3,y3
-     * @param l2b x4,y4
+     * @param l1start x1,y1
+     * @param l1end   x2,y2
+     * @param l2start x3,y3
+     * @param l2end   x4,y4
      * @return
      */
-    private LinePoint getIntersectionPoint(LinePoint l1a, LinePoint l1b, LinePoint l2a, LinePoint l2b) {
+    private LinePoint getIntersectionPoint(LinePoint l1start, LinePoint l1end, LinePoint l2start, LinePoint l2end) {
 
-        float x1 = l1a.getXPos();
-        float y1 = l1a.getYPos();
-        float x2 = l1b.getXPos();
-        float y2 = l1b.getYPos();
-        float x3 = l2a.getXPos();
-        float y3 = l2a.getYPos();
-        float x4 = l2b.getXPos();
-        float y4 = l2b.getYPos();
+        float x1 = l1start.getXPos();
+        float y1 = l1start.getYPos();
+        float x2 = l1end.getXPos();
+        float y2 = l1end.getYPos();
+        float x3 = l2start.getXPos();
+        float y3 = l2start.getYPos();
+        float x4 = l2end.getXPos();
+        float y4 = l2end.getYPos();
 
+        //p0_x = x1
+        //p1_x = x2
+        //p2_x = x3
+        //p3_x = x4
 
-        float a = (x1 * y2 - y1 * x2);
-        float b = (x3 * y4 - y3 * x4);
-        float determinant = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
-        if (determinant == 0) {
-            return null;
+        //p0_y = y1
+        //p1_y = y2
+        //p2_y = y3
+        //p3_y = y4
+
+        float s1_x, s1_y, s2_x, s2_y;
+
+        s1_x = x2 - x1;
+        s1_y = y2 - y1;
+        s2_x = x4 - x3;
+        s2_y = y4 - y3;
+
+        float s, t;
+        float v = -s2_x * s1_y + s1_x * s2_y;
+        s = (-s1_y * (x1 - x3) + s1_x * (y1 - y3)) / v;
+        t = (s2_x * (y1 - y3) - s2_y * (x1 - x3)) / v;
+
+        if (v != 2184840.0) {
+            Log.d(TAG, "getIntersectionPoint: RAZLICITO");
         }
-        float x = (a * (x3 - x4) - (x1 - x2) * b) / determinant;
-        float y = (a * (y3 - y4) - (y1 - y2) * b) / determinant;
-        return new LinePoint(x, y);
+
+        if (s >= 0 && s <= 1 && t >= 0 && t <= 1) {
+            // Collision detected
+            float x = x1 + (t * s1_x);
+            float y = y1 + (t * s1_y);
+            return new LinePoint(x, y);
+        }
+
+        return null;
+
+//
+//        float a = (x1 * y2 - y1 * x2);
+//        float b = (x3 * y4 - y3 * x4);
+//        float determinant = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+//        if (determinant == 0) {
+//            return null;
+//        }
+//        float x = (a * (x3 - x4) - (x1 - x2) * b) / determinant;
+//        float y = (a * (y3 - y4) - (y1 - y2) * b) / determinant;
+//        return new LinePoint(x, y);
     }
 }
