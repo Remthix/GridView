@@ -124,6 +124,10 @@ public final class KDSearchTree {
         return root == null;
     }
 
+    public void clear() {
+        root = null;
+    }
+
     /**
      * Tree traversal
      *

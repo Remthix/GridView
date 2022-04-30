@@ -68,7 +68,7 @@ public final class ObjectDraw extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (this.gridProperties != null) {
+        if (this.gridProperties != null && this.gridProperties.isDrawGrid()) {
 
             drawGridOnCanvas(this.gridProperties, canvas);
         }
@@ -77,6 +77,74 @@ public final class ObjectDraw extends View {
             canvas.drawBitmap(bitmapImage, mPosX, mPosY, this.bitmapPaint);
         }
 
+    }
+
+    private void init() {
+
+        this.bitmapPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    }
+
+    public final void setBitmapImage(@NonNull Bitmap bitmapImage) {
+        this.bitmapImage = bitmapImage;
+
+    }
+
+    public void drawGrid(@NonNull GridProperties gridProperties) {
+        this.gridProperties = gridProperties;
+        this.grid.clear();
+        this.searchTree.clear();
+        invalidate();
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN: {
+                final int pointerIndex = event.getActionIndex();
+                final float x = event.getX(pointerIndex);
+                final float y = event.getY(pointerIndex);
+
+                xMove = x;
+                yMove = y;
+                pointerID = event.getPointerId(0);
+                isMoving = false;
+                break;
+            }
+            case MotionEvent.ACTION_MOVE: {
+                final int pointerIndex = event.findPointerIndex(pointerID);
+                isMoving = true;
+
+                if (pointerIndex != -1) {
+                    final float x = event.getX(pointerIndex);
+                    final float y = event.getY(pointerIndex);
+                    final float dx = x - xMove;
+                    final float dy = y - yMove;
+
+                    mPosX += dx;
+                    mPosY += dy;
+
+                    invalidate();
+                    xMove = x;
+                    yMove = y;
+                }
+                break;
+            }
+            case MotionEvent.ACTION_UP:
+                isMoving = false;
+                break;
+            case MotionEvent.ACTION_POINTER_UP: {
+                final int pointerIndex = event.getActionIndex();
+                final int pointID = event.getPointerId(pointerIndex);
+                if (pointID == pointerID) {
+                    final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
+                    xMove = event.getX(newPointerIndex);
+                    yMove = event.getY(newPointerIndex);
+                    pointerID = event.getPointerId(newPointerIndex);
+                }
+                isMoving = false;
+            }
+        }
+        return true;
     }
 
     private void drawGridOnCanvas(final GridProperties gridProperties, final Canvas canvas) {
@@ -170,71 +238,6 @@ public final class ObjectDraw extends View {
         return nodePoint.get(0) <= xThreshold && nodePoint.get(1) <= yThreshold;
     }
 
-    private void init() {
-
-        this.bitmapPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    }
-
-    public final void setBitmapImage(@NonNull Bitmap bitmapImage) {
-        this.bitmapImage = bitmapImage;
-
-    }
-
-    public void drawGrid(@NonNull GridProperties gridProperties) {
-        this.gridProperties = gridProperties;
-        this.grid.clear();
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN: {
-                final int pointerIndex = event.getActionIndex();
-                final float x = event.getX(pointerIndex);
-                final float y = event.getY(pointerIndex);
-
-                xMove = x;
-                yMove = y;
-                pointerID = event.getPointerId(0);
-                isMoving = false;
-                break;
-            }
-            case MotionEvent.ACTION_MOVE: {
-                final int pointerIndex = event.findPointerIndex(pointerID);
-                isMoving = true;
-
-                if (pointerIndex != -1) {
-                    final float x = event.getX(pointerIndex);
-                    final float y = event.getY(pointerIndex);
-                    final float dx = x - xMove;
-                    final float dy = y - yMove;
-
-                    mPosX += dx;
-                    mPosY += dy;
-
-                    invalidate();
-                    xMove = x;
-                    yMove = y;
-                }
-                break;
-            }
-            case MotionEvent.ACTION_UP:
-                isMoving = false;
-                break;
-            case MotionEvent.ACTION_POINTER_UP: {
-                final int pointerIndex = event.getActionIndex();
-                final int pointID = event.getPointerId(pointerIndex);
-                if (pointID == pointerID) {
-                    final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
-                    xMove = event.getX(newPointerIndex);
-                    yMove = event.getY(newPointerIndex);
-                    pointerID = event.getPointerId(newPointerIndex);
-                }
-                isMoving = false;
-            }
-        }
-        return true;
-    }
 
     /**
      * P(li,l2)
@@ -275,12 +278,11 @@ public final class ObjectDraw extends View {
 
         float s, t;
         float v = -s2_x * s1_y + s1_x * s2_y;
+        if (v == 0) {
+            return null;
+        }
         s = (-s1_y * (x1 - x3) + s1_x * (y1 - y3)) / v;
         t = (s2_x * (y1 - y3) - s2_y * (x1 - x3)) / v;
-
-        if (v != 2184840.0) {
-            Log.d(TAG, "getIntersectionPoint: RAZLICITO");
-        }
 
         if (s >= 0 && s <= 1 && t >= 0 && t <= 1) {
             // Collision detected
@@ -290,16 +292,5 @@ public final class ObjectDraw extends View {
         }
 
         return null;
-
-//
-//        float a = (x1 * y2 - y1 * x2);
-//        float b = (x3 * y4 - y3 * x4);
-//        float determinant = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
-//        if (determinant == 0) {
-//            return null;
-//        }
-//        float x = (a * (x3 - x4) - (x1 - x2) * b) / determinant;
-//        float y = (a * (y3 - y4) - (y1 - y2) * b) / determinant;
-//        return new LinePoint(x, y);
     }
 }

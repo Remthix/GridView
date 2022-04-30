@@ -1,5 +1,6 @@
 package com.sdremthix.com.gridview;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -8,12 +9,16 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.sdremthix.com.gridview.domain.GridProperties;
 import com.sdremthix.com.gridview.domain.KDSearchTree;
+import com.sdremthix.com.gridview.view.GridPropertiesDialog;
 import com.sdremthix.com.gridview.view.ObjectDraw;
 
 import java.util.Arrays;
@@ -25,12 +30,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ObjectDraw objectDraw = findViewById(R.id.draw_main);
+        final ObjectDraw objectDraw = findViewById(R.id.draw_main);
+
+        findViewById(R.id.btn_grid_properties).setOnClickListener(view -> {
+            //Toggle dialog display
+            toggleGridPropertiesDisplay(objectDraw);
+        });
+
 
         Bitmap image = getBitmapFromVectorDrawable(this, R.drawable.ic_launcher_background);
         objectDraw.setBitmapImage(image);
         objectDraw.drawGrid(new GridProperties(
-                null,
                 10, 3,
                 true,
                 true,
@@ -56,6 +66,23 @@ public class MainActivity extends AppCompatActivity {
         Log.d("SRKI", "onCreate: TREE: " + kdSearchTree);
         Log.d("SRKI", "Najbliza tacka: " + kdSearchTree.findNearestNeighbor(new KDSearchTree.NodePoint(Arrays.asList(40f, 40f))));
     }
+
+    private void toggleGridPropertiesDisplay(@NonNull final ObjectDraw objectDraw){
+
+        final GridPropertiesDialog gridPropertiesDialog = new GridPropertiesDialog(new GridPropertiesDialog.GridPropertiesListener() {
+            @Override
+            public void onGridPropertiesUpdated(GridProperties updatedGridProperties) {
+                objectDraw.drawGrid(updatedGridProperties);
+            }
+        });
+
+        final FragmentManager fragmentManager = getSupportFragmentManager();
+        gridPropertiesDialog.show(getSupportFragmentManager(),"SRKI_FRAG");
+
+
+    }
+
+
 
     public static Bitmap getBitmapFromVectorDrawable(Context context, int drawableId) {
         Drawable drawable = ContextCompat.getDrawable(context, drawableId);
