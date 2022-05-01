@@ -1,15 +1,16 @@
 package com.sdremthix.com.gridview.view;
 
-import android.app.Dialog;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatCheckBox;
-import androidx.appcompat.widget.AppCompatEditText;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.ViewModelProvider;
 
-import com.sdremthix.com.gridview.R;
+import com.sdremthix.com.gridview.databinding.DialogFragmentGridPropertiesBinding;
 import com.sdremthix.com.gridview.domain.GridProperties;
 
 /**
@@ -18,55 +19,53 @@ import com.sdremthix.com.gridview.domain.GridProperties;
 public final class GridPropertiesDialog extends DialogFragment {
 
     @Nullable
-    private final GridPropertiesListener gridPropertiesListener;
+    private GridPropertiesViewModel gridPropertiesViewModel;
+
+    private DialogFragmentGridPropertiesBinding binding;
 
     public GridPropertiesDialog() {
-        gridPropertiesListener = null;
     }
 
-    public GridPropertiesDialog(GridPropertiesListener gridPropertiesListener) {
-        this.gridPropertiesListener = gridPropertiesListener;
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //Listen to ViewModel events
+        gridPropertiesViewModel = new ViewModelProvider(requireActivity()).get(GridPropertiesViewModel.class);
     }
 
     @NonNull
     @Override
-    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        final Bundle arguments = getArguments();
-        final Dialog dialog = new Dialog(requireContext());
-        dialog.requestWindowFeature(STYLE_NO_TITLE);
-        dialog.setContentView(R.layout.dialog_fragment_grid_properties);
-        final AppCompatCheckBox chkShowGrid = dialog.findViewById(R.id.chk_show_grid);
-        final AppCompatCheckBox chkSnapToGrid = dialog.findViewById(R.id.chk_snap_to_grid);
-        final AppCompatCheckBox chkRenderToImage = dialog.findViewById(R.id.chk_render_to_image);
-        final AppCompatEditText editColumns = dialog.findViewById(R.id.edit_columns);
-        final AppCompatEditText editRows = dialog.findViewById(R.id.edit_rows);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        binding = DialogFragmentGridPropertiesBinding.inflate(inflater, container, false);
+        binding.setViewModel(gridPropertiesViewModel);
+        if (getDialog() != null) {
+            getDialog().requestWindowFeature(STYLE_NO_TITLE);
+        }
+        return binding.getRoot();
+    }
 
-        dialog.findViewById(R.id.btn_dialog_apply).setOnClickListener(view -> {
-            if (gridPropertiesListener != null) {
-                gridPropertiesListener.onGridPropertiesUpdated(new GridProperties(Integer.parseInt(editColumns.getText().toString()),
-                        Integer.parseInt(editRows.getText().toString()),
-                        chkShowGrid.isChecked(), chkSnapToGrid.isChecked(),
-                        chkRenderToImage.isChecked(), false));
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        binding.btnDialogApply.setOnClickListener(v -> {
+            if (gridPropertiesViewModel != null) {
+                gridPropertiesViewModel.updateGrid(new GridProperties(Integer.parseInt(binding.editColumns.getText().toString()),
+                        Integer.parseInt(binding.editRows.getText().toString()),
+                        binding.chkShowGrid.isChecked(), binding.chkSnapToGrid.isChecked(),
+                        binding.chkRenderToImage.isChecked(), false));
             }
             dismiss();
         });
 
-        dialog.findViewById(R.id.btn_dialog_close).setOnClickListener(view -> dismiss());
+        binding.btnDialogClose.setOnClickListener(v -> dismiss());
 
-        chkShowGrid.setOnCheckedChangeListener((compoundButton, checked) -> {
-            if (gridPropertiesListener != null) {
-                gridPropertiesListener.onGridPropertiesUpdated(new GridProperties(Integer.parseInt(editColumns.getText().toString()),
-                        Integer.parseInt(editRows.getText().toString()),
-                        checked, chkSnapToGrid.isChecked(),
-                        chkRenderToImage.isChecked(), false));
+        binding.chkShowGrid.setOnCheckedChangeListener((compoundButton, checked) -> {
+            if (gridPropertiesViewModel != null) {
+                gridPropertiesViewModel.updateGrid(new GridProperties(Integer.parseInt(binding.editColumns.getText().toString()),
+                        Integer.parseInt(binding.editRows.getText().toString()),
+                        checked, binding.chkSnapToGrid.isChecked(),
+                        binding.chkRenderToImage.isChecked(), false));
             }
         });
-
-
-        return dialog;
-    }
-
-    public interface GridPropertiesListener {
-        void onGridPropertiesUpdated(final GridProperties updatedGridProperties);
     }
 }
