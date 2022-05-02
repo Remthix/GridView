@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
         gridPropertiesViewModel = new ViewModelProvider(MainActivity.this).get(GridPropertiesViewModel.class);
 
-        gridPropertiesViewModel.observeGridProperties().observe(MainActivity.this, objectDraw::drawGrid);
+        gridPropertiesViewModel.observeGridDrawer().observe(MainActivity.this, objectDraw::drawGrid);
 
         findViewById(R.id.btn_grid_properties).setOnClickListener(view -> {
             //Toggle dialog display

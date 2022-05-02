@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.sdremthix.com.gridview.domain.GridDrawer;
 import com.sdremthix.com.gridview.domain.GridProperties;
 
 /**
@@ -11,7 +12,7 @@ import com.sdremthix.com.gridview.domain.GridProperties;
  */
 public final class GridPropertiesViewModel extends ViewModel {
 
-    private final MutableLiveData<GridProperties> gridPropertiesData = new MutableLiveData<>();
+    private final MutableLiveData<GridDrawer> gridDrawerMutableLiveData = new MutableLiveData<>();
     public final MutableLiveData<Boolean> showGridEnabled = new MutableLiveData<>();
     public final MutableLiveData<Boolean> snapToGridEnabled = new MutableLiveData<>();
     public final MutableLiveData<Boolean> squareCellsEnabled = new MutableLiveData<>();
@@ -20,7 +21,7 @@ public final class GridPropertiesViewModel extends ViewModel {
 
 
     public void updateGrid(final GridProperties gridProperties) {
-        gridPropertiesData.setValue(gridProperties);
+        gridDrawerMutableLiveData.setValue(new GridDrawer(gridProperties));
         showGridEnabled.setValue(gridProperties.isDrawGrid());
         snapToGridEnabled.setValue(gridProperties.isSnapToGrid());
         squareCellsEnabled.setValue(gridProperties.isSquareCells());
@@ -28,8 +29,8 @@ public final class GridPropertiesViewModel extends ViewModel {
         rows.setValue(gridProperties.getRows());
     }
 
-    public LiveData<GridProperties> observeGridProperties() {
-        return this.gridPropertiesData;
+    public LiveData<GridDrawer> observeGridDrawer() {
+        return this.gridDrawerMutableLiveData;
     }
 
 }
