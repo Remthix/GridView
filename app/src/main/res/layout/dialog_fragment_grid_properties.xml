@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="viewModel"
             type="com.sdremthix.com.gridview.view.GridPropertiesViewModel" />
@@ -28,8 +30,10 @@
                 android:id="@+id/edit_columns"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:enabled="@{viewModel.squareCellsEnabled?false:true}"
                 android:inputType="number"
-                android:text="10" />
+                android:text="@{String.valueOf(viewModel.columns)}"
+                tools:text="10" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
@@ -46,8 +50,10 @@
                 android:id="@+id/edit_rows"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:enabled="@{viewModel.squareCellsEnabled?false:true}"
                 android:inputType="number"
-                android:text="10" />
+                android:text="@{String.valueOf(viewModel.rows)}"
+                tools:text="10" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
@@ -56,11 +62,19 @@
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/chk_square_cells"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="@={viewModel.squareCellsEnabled}"
+            android:text="Square cells" />
+
+        <androidx.appcompat.widget.AppCompatCheckBox
             android:id="@+id/chk_snap_to_grid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:checked="@={viewModel.snapToGridEnabled}"
             android:text="Snap to grid" />
+
 
         <androidx.appcompat.widget.AppCompatCheckBox
             android:id="@+id/chk_render_to_image"

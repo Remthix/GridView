@@ -41,18 +41,13 @@ public final class GridPropertiesDialog extends DialogFragment {
         if (getDialog() != null) {
             getDialog().requestWindowFeature(STYLE_NO_TITLE);
         }
-        return binding.getRoot();
-    }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
         binding.btnDialogApply.setOnClickListener(v -> {
             if (gridPropertiesViewModel != null) {
                 gridPropertiesViewModel.updateGrid(new GridProperties(Integer.parseInt(binding.editColumns.getText().toString()),
                         Integer.parseInt(binding.editRows.getText().toString()),
                         binding.chkShowGrid.isChecked(), binding.chkSnapToGrid.isChecked(),
-                        binding.chkRenderToImage.isChecked(), false));
+                        binding.chkRenderToImage.isChecked(), binding.chkSquareCells.isChecked()));
             }
             dismiss();
         });
@@ -61,11 +56,15 @@ public final class GridPropertiesDialog extends DialogFragment {
 
         binding.chkShowGrid.setOnCheckedChangeListener((compoundButton, checked) -> {
             if (gridPropertiesViewModel != null) {
-                gridPropertiesViewModel.updateGrid(new GridProperties(Integer.parseInt(binding.editColumns.getText().toString()),
-                        Integer.parseInt(binding.editRows.getText().toString()),
-                        checked, binding.chkSnapToGrid.isChecked(),
-                        binding.chkRenderToImage.isChecked(), false));
+//                gridPropertiesViewModel.updateGrid(new GridProperties(Integer.parseInt(binding.editColumns.getText().toString()),
+//                        Integer.parseInt(binding.editRows.getText().toString()),
+//                        checked, binding.chkSnapToGrid.isChecked(),
+//                        binding.chkRenderToImage.isChecked(), binding.chkSquareCells.isChecked()));
             }
         });
+
+
+        return binding.getRoot();
     }
+
 }
