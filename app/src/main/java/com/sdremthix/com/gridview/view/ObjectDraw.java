@@ -14,7 +14,6 @@ import androidx.annotation.Nullable;
 
 import com.sdremthix.com.gridview.domain.GridDrawer;
 import com.sdremthix.com.gridview.domain.GridLine;
-import com.sdremthix.com.gridview.domain.GridPosition;
 import com.sdremthix.com.gridview.domain.LinePoint;
 import com.sdremthix.com.gridview.domain.Pair;
 
@@ -159,7 +158,7 @@ public final class ObjectDraw extends View {
 
 
         if (gridDrawer.isSnapToGrid() && !isMoving) {
-            final GridPosition updatedValues = gridDrawer.snapToGrid(mPosX, mPosY);
+            final LinePoint updatedValues = gridDrawer.snapToGrid(mPosX, mPosY);
             mPosX = updatedValues.getXPos();
             mPosY = updatedValues.getYPos();
         }

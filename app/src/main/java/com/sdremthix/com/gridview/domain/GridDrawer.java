@@ -68,14 +68,14 @@ public final class GridDrawer {
      * @param mPosY y coordinate position.
      * @return A new grid position based on the updated coordinates.
      */
-    public GridPosition snapToGrid(float mPosX, float mPosY) {
+    public LinePoint snapToGrid(float mPosX, float mPosY) {
         final KDSearchTree.Node nearestPoint = searchTree.findNearestNeighbor(new KDSearchTree.NodePoint(Arrays.asList(mPosX, mPosY)));
         if (nearestPoint != null && isInThreshold(nearestPoint.getNodePoint(), mPosX, mPosY)) {
             mPosX = nearestPoint.getNodePoint().get(0);
             mPosY = nearestPoint.getNodePoint().get(1);
         }
 
-        return new GridPosition(mPosX, mPosY);
+        return new LinePoint(mPosX, mPosY);
     }
 
     public int getLineWidth() {
