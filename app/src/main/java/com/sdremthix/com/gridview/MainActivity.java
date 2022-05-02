@@ -15,6 +15,7 @@ import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.sdremthix.com.gridview.domain.GridPaint;
 import com.sdremthix.com.gridview.domain.GridProperties;
 import com.sdremthix.com.gridview.domain.KDSearchTree;
 import com.sdremthix.com.gridview.view.GridPropertiesDialog;
@@ -25,8 +26,6 @@ import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
-    private GridPropertiesViewModel gridPropertiesViewModel;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
         final ObjectDraw objectDraw = findViewById(R.id.draw_main);
 
-        gridPropertiesViewModel = new ViewModelProvider(MainActivity.this).get(GridPropertiesViewModel.class);
+        GridPropertiesViewModel gridPropertiesViewModel = new ViewModelProvider(MainActivity.this).get(GridPropertiesViewModel.class);
 
         gridPropertiesViewModel.observeGridDrawer().observe(MainActivity.this, objectDraw::drawGrid);
 
@@ -51,7 +50,8 @@ public class MainActivity extends AppCompatActivity {
                 true,
                 true,
                 false,
-                false
+                false,
+                new GridPaint()
         );
         gridPropertiesViewModel.updateGrid(gridProperties);
 

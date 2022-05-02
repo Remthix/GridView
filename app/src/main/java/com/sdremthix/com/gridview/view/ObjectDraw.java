@@ -80,6 +80,18 @@ public final class ObjectDraw extends View {
 
     public void drawGrid(@NonNull GridDrawer gridDrawer) {
         this.gridDrawer = gridDrawer;
+        gridPaint.setStrokeWidth(gridDrawer.getLineWidth());
+        int color;
+        try {
+            color = Color.parseColor(gridDrawer.getLineColor());
+        } catch (Exception e) {
+            e.printStackTrace();
+            color = Color.RED;
+        }
+
+        gridPaint.setColor(color);
+
+
         invalidate();
     }
 
@@ -135,10 +147,8 @@ public final class ObjectDraw extends View {
     }
 
     private void drawGridOnCanvas(@NonNull final GridDrawer gridDrawer, final Canvas canvas) {
-        gridPaint.setStrokeWidth(3);
-        gridPaint.setColor(Color.RED);
 
-        final Map<LinePoint, Pair<GridLine, GridLine>> grid = gridDrawer.generateGrid(getWidth(), getHeight(), gridPaint);
+        final Map<LinePoint, Pair<GridLine, GridLine>> grid = gridDrawer.generateGrid(getWidth(), getHeight());
         //draw grid
         for (Map.Entry<LinePoint, Pair<GridLine, GridLine>> mapEntry : grid.entrySet()) {
             //Horizontal

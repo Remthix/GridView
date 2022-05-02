@@ -11,6 +11,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.sdremthix.com.gridview.databinding.DialogFragmentGridPropertiesBinding;
+import com.sdremthix.com.gridview.domain.GridPaint;
 import com.sdremthix.com.gridview.domain.GridProperties;
 
 /**
@@ -47,7 +48,7 @@ public final class GridPropertiesDialog extends DialogFragment {
                 gridPropertiesViewModel.updateGrid(new GridProperties(Integer.parseInt(binding.editColumns.getText().toString()),
                         Integer.parseInt(binding.editRows.getText().toString()),
                         binding.chkShowGrid.isChecked(), binding.chkSnapToGrid.isChecked(),
-                        binding.chkRenderToImage.isChecked(), binding.chkSquareCells.isChecked()));
+                        binding.chkRenderToImage.isChecked(), binding.chkSquareCells.isChecked(), new GridPaint()));
             }
             dismiss();
         });

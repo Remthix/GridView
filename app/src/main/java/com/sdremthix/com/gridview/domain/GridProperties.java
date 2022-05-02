@@ -22,9 +22,11 @@ public final class GridProperties {
 
     final boolean squareCells;
 
-    public GridProperties( int columns, int rows, boolean drawGrid, boolean snapToGrid, boolean renderToImage, boolean squareCells) throws IllegalArgumentException {
+    private final GridPaint gridPaint;
 
-        if(columns <=0 || rows<=0){
+    public GridProperties(int columns, int rows, boolean drawGrid, boolean snapToGrid, boolean renderToImage, boolean squareCells, GridPaint gridPaint) throws IllegalArgumentException {
+
+        if (columns <= 0 || rows <= 0) {
             throw new IllegalArgumentException("Grid Properties: number for either rows or columns must be greater than 0!");
         }
 
@@ -41,6 +43,7 @@ public final class GridProperties {
         this.snapToGrid = snapToGrid;
         this.renderToImage = renderToImage;
         this.squareCells = squareCells;
+        this.gridPaint = gridPaint;
     }
 
     /**
@@ -77,5 +80,9 @@ public final class GridProperties {
 
     public int getCellWidthPercentage() {
         return MAX_CELL_WIDTH;
+    }
+
+    public GridPaint getGridPaint() {
+        return gridPaint;
     }
 }

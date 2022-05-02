@@ -1,7 +1,5 @@
 package com.sdremthix.com.gridview.domain;
 
-import android.graphics.Paint;
-
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
@@ -27,15 +25,15 @@ public final class GridDrawer {
         this.searchTree.clear();
     }
 
-    public Map<LinePoint, Pair<GridLine, GridLine>> generateGrid(final int width, final int height, @NonNull final Paint gridPaint) {
+    public Map<LinePoint, Pair<GridLine, GridLine>> generateGrid(final int width, final int height) {
         //Calculate new grid
         if (grid.isEmpty()) {
 
             List<GridLine> tempLineData;
             if (gridProperties.isSquareCells()) {
-                tempLineData = generateSquareCells(width, height, width / gridProperties.getCellWidthPercentage(), gridPaint);
+                tempLineData = generateSquareCells(width, height, width / gridProperties.getCellWidthPercentage(), gridProperties.getGridPaint());
             } else {
-                tempLineData = generateColumnsAndRowsGrid(gridProperties.getColumns(), gridProperties.getRows(), width, height, gridPaint);
+                tempLineData = generateColumnsAndRowsGrid(gridProperties.getColumns(), gridProperties.getRows(), width, height, gridProperties.getGridPaint());
             }
 
             for (GridLine gridLine : tempLineData) {
@@ -65,6 +63,13 @@ public final class GridDrawer {
         return this.gridProperties.isSnapToGrid();
     }
 
+    /**
+     * Find nearest point to the coordinates passed and if any return the updated grid position.
+     *
+     * @param mPosX x coordinate position.
+     * @param mPosY y coordinate position.
+     * @return A new grid position based on the updated coordinates.
+     */
     public GridPosition snapToGrid(float mPosX, float mPosY) {
         final KDSearchTree.Node nearestPoint = searchTree.findNearestNeighbor(new KDSearchTree.NodePoint(Arrays.asList(mPosX, mPosY)));
         if (nearestPoint != null && isInThreshold(nearestPoint.getNodePoint(), mPosX, mPosY)) {
@@ -75,14 +80,22 @@ public final class GridDrawer {
         return new GridPosition(mPosX, mPosY);
     }
 
-    private List<GridLine> generateSquareCells(final int width, final int height, final int cellWidth, @NonNull Paint gridPaint) {
+    public int getLineWidth() {
+        return this.gridProperties.getGridPaint().getLineWidth();
+    }
+
+    public String getLineColor() {
+        return this.gridProperties.getGridPaint().getColor();
+    }
+
+    private List<GridLine> generateSquareCells(final int width, final int height, final int cellWidth, final GridPaint gridPaint) {
         int columns = width / cellWidth;
         int rows = height / cellWidth;
 
         return generateColumnsAndRowsGrid(columns, rows, width, height, gridPaint);
     }
 
-    private List<GridLine> generateColumnsAndRowsGrid(final int numColumns, final int numRows, final int width, final int height, @NonNull Paint gridPaint) {
+    private List<GridLine> generateColumnsAndRowsGrid(final int numColumns, final int numRows, final int width, final int height, final GridPaint gridPaint) {
         List<GridLine> tempLineData = new ArrayList<>();
         int spacingWidth = width / numColumns;
         int spacingHeight = height / numRows;
@@ -95,12 +108,12 @@ public final class GridDrawer {
                 //draw horizontal
                 LinePoint horizontalStart = new LinePoint(0, startHeight);
                 LinePoint horizontalEnd = new LinePoint(width, startHeight);
-                GridLine horizontal = new GridLine(horizontalStart, horizontalEnd, "" + gridPaint.getColor(), gridPaint.getStrokeWidth());
+                GridLine horizontal = new GridLine(horizontalStart, horizontalEnd, "" + gridPaint.getColor(), gridPaint.getLineWidth());
 
                 //draw vertical
                 LinePoint verticalStart = new LinePoint(startWidth, 0);
                 LinePoint verticalEnd = new LinePoint(startWidth, height);
-                GridLine vertical = new GridLine(verticalStart, verticalEnd, "" + gridPaint.getColor(), gridPaint.getStrokeWidth());
+                GridLine vertical = new GridLine(verticalStart, verticalEnd, "" + gridPaint.getColor(), gridPaint.getLineWidth());
 
                 tempLineData.add(horizontal);
                 tempLineData.add(vertical);
@@ -169,6 +182,14 @@ public final class GridDrawer {
         return null;
     }
 
+    /**
+     * Check if the coordinate position fall into the threshold value (currently 10% of the width or height value).
+     *
+     * @param nodePoint The nearest search coordinate point.
+     * @param x         The current x position.
+     * @param y         The current y position.
+     * @return true if in threshold bounds and false if otherwise.
+     */
     private boolean isInThreshold(@NonNull KDSearchTree.NodePoint nodePoint, float x, float y) {
         final float xThreshold = x + (x / 100 * 10);
         final float yThreshold = y + (y / 100 * 10);
