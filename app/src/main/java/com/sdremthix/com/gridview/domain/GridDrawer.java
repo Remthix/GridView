@@ -1,7 +1,5 @@
 package com.sdremthix.com.gridview.domain;
 
-import androidx.annotation.NonNull;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -190,7 +188,7 @@ public final class GridDrawer {
      * @param y         The current y position.
      * @return true if in threshold bounds and false if otherwise.
      */
-    private boolean isInThreshold(@NonNull KDSearchTree.NodePoint nodePoint, float x, float y) {
+    private boolean isInThreshold(KDSearchTree.NodePoint nodePoint, float x, float y) {
         final float xThreshold = x + (x / 100 * 10);
         final float yThreshold = y + (y / 100 * 10);
 
