@@ -147,40 +147,18 @@ public final class ObjectDraw extends View {
         return true;
     }
 
-    private void drawGridOnCanvas(final GridProperties gridProperties, final Canvas canvas) {
+    private void drawGridOnCanvas(@NonNull final GridProperties gridProperties, final Canvas canvas) {
         gridPaint.setStrokeWidth(3);
         gridPaint.setColor(Color.RED);
         //Calculate new grid
         if (grid.isEmpty()) {
             int width = getWidth();
             int height = getHeight();
-
-            int spacingWidth = width / gridProperties.getColumns();
-            int spacingHeight = height / gridProperties.getRows();
-
-            int startWidth = 0;
-            int startHeight = 0;
-            List<GridLine> tempLineData = new ArrayList<>();
-            for (int i = 0; i < gridProperties.getColumns(); i++) {
-                for (int j = 0; j < gridProperties.getRows(); j++) {
-
-                    //draw horizontal
-                    LinePoint horizontalStart = new LinePoint(0, startHeight);
-                    LinePoint horizontalEnd = new LinePoint(width, startHeight);
-                    GridLine horizontal = new GridLine(horizontalStart, horizontalEnd, "" + gridPaint.getColor(), gridPaint.getStrokeWidth());
-
-                    //draw vertical
-                    LinePoint verticalStart = new LinePoint(startWidth, 0);
-                    LinePoint verticalEnd = new LinePoint(startWidth, height);
-                    GridLine vertical = new GridLine(verticalStart, verticalEnd, "" + gridPaint.getColor(), gridPaint.getStrokeWidth());
-
-                    tempLineData.add(horizontal);
-                    tempLineData.add(vertical);
-
-                    //Update spacings
-                    startWidth += spacingWidth;
-                    startHeight += spacingHeight;
-                }
+            List<GridLine> tempLineData;
+            if (gridProperties.isSquareCells()) {
+                tempLineData = generateSquareCells(width, height, width / gridProperties.getCellWidthPercentage(), gridPaint);
+            } else {
+                tempLineData = generateColumnsAndRowsGrid(gridProperties.getColumns(), gridProperties.getRows(), width, height, gridPaint);
             }
 
             for (GridLine gridLine : tempLineData) {
@@ -224,6 +202,45 @@ public final class ObjectDraw extends View {
 //                    mPosY = lines.getSecond().getStartPoint().getYPos();
 //                }
         }
+    }
+
+    private List<GridLine> generateSquareCells(final int width, final int height, final int cellWidth, @NonNull Paint gridPaint) {
+        int columns = width / cellWidth;
+        int rows = height / cellWidth;
+
+        return generateColumnsAndRowsGrid(columns, rows, width, height, gridPaint);
+    }
+
+    private List<GridLine> generateColumnsAndRowsGrid(final int numColumns, final int numRows, final int width, final int height, @NonNull Paint gridPaint) {
+        List<GridLine> tempLineData = new ArrayList<>();
+        int spacingWidth = width / numColumns;
+        int spacingHeight = height / numRows;
+
+        int startWidth = 0;
+        int startHeight = 0;
+        for (int i = 0; i < numColumns; i++) {
+            for (int j = 0; j < numRows; j++) {
+
+                //draw horizontal
+                LinePoint horizontalStart = new LinePoint(0, startHeight);
+                LinePoint horizontalEnd = new LinePoint(width, startHeight);
+                GridLine horizontal = new GridLine(horizontalStart, horizontalEnd, "" + gridPaint.getColor(), gridPaint.getStrokeWidth());
+
+                //draw vertical
+                LinePoint verticalStart = new LinePoint(startWidth, 0);
+                LinePoint verticalEnd = new LinePoint(startWidth, height);
+                GridLine vertical = new GridLine(verticalStart, verticalEnd, "" + gridPaint.getColor(), gridPaint.getStrokeWidth());
+
+                tempLineData.add(horizontal);
+                tempLineData.add(vertical);
+
+                //Update spacings
+                startWidth += spacingWidth;
+                startHeight += spacingHeight;
+            }
+        }
+
+        return tempLineData;
     }
 
     private boolean isInThreshold(@NonNull KDSearchTree.NodePoint nodePoint, float x, float y) {

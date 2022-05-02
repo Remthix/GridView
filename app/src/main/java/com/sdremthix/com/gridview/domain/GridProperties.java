@@ -5,6 +5,11 @@ public final class GridProperties {
     final int MAX_COLUMNS = 50;
     final int MAX_ROWS = 50;
 
+    /**
+     * Cell width ass a factor of the embedding view width and height.
+     */
+    final int MAX_CELL_WIDTH = 20;
+
     final int columns;
 
     final int rows;
@@ -68,5 +73,9 @@ public final class GridProperties {
 
     public int snapToGridPercentage() {
         return 5;
+    }
+
+    public int getCellWidthPercentage() {
+        return MAX_CELL_WIDTH;
     }
 }
