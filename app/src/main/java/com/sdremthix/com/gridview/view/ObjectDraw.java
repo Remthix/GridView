@@ -69,7 +69,6 @@ public final class ObjectDraw extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         if (this.gridProperties != null && this.gridProperties.isDrawGrid()) {
-
             drawGridOnCanvas(this.gridProperties, canvas);
         }
 
@@ -186,21 +185,13 @@ public final class ObjectDraw extends View {
 
 
         if (gridProperties.isSnapToGrid() && !isMoving) {
-            Log.d(TAG, "onDraw: " + searchTree.toString());
 
-            LinePoint isSnap = new LinePoint(mPosX, mPosY);
             final KDSearchTree.Node nearestPoint = searchTree.findNearestNeighbor(new KDSearchTree.NodePoint(Arrays.asList(mPosX, mPosY)));
             if (nearestPoint != null && isInThreshold(nearestPoint.getNodePoint(), mPosX, mPosY)) {
                 mPosX = nearestPoint.getNodePoint().get(0);
                 mPosY = nearestPoint.getNodePoint().get(1);
             }
 
-//                if (grid.containsKey(isSnap)) {
-//                    Log.d("SRKI", "onDraw: MRSKBJKDHkjGHDKJGFEJ");
-//                    Pair<GridLine, GridLine> lines = grid.get(isSnap);
-//                    mPosX = lines.getFirst().getStartPoint().getXPos();
-//                    mPosY = lines.getSecond().getStartPoint().getYPos();
-//                }
         }
     }
 
