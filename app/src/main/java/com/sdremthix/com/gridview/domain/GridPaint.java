@@ -20,7 +20,7 @@ public final class GridPaint {
      */
     public GridPaint() {
         lineWidth = 3;
-        color = "#808080";
+        color = "#808080"; //Default grey color.
     }
 
     /**

@@ -1,6 +1,6 @@
 package com.sdremthix.com.gridview.domain;
 
-import com.sdremthix.com.gridview.domain.algorithm.KDSearchTree;
+import com.sdremthix.com.gridview.search.algorithm.KDSearchTree;
 import com.sdremthix.com.gridview.domain.contracts.IGridDrawer;
 import com.sdremthix.com.gridview.domain.entities.LinePoint;
 import com.sdremthix.com.gridview.domain.entities.Pair;
