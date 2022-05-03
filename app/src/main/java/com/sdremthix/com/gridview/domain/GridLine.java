@@ -1,5 +1,7 @@
 package com.sdremthix.com.gridview.domain;
 
+import com.sdremthix.com.gridview.domain.entities.LinePoint;
+
 /**
  * Grid line data.
  */

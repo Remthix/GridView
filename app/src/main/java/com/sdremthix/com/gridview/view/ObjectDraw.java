@@ -12,10 +12,10 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.sdremthix.com.gridview.domain.GridDrawer;
 import com.sdremthix.com.gridview.domain.GridLine;
-import com.sdremthix.com.gridview.domain.LinePoint;
-import com.sdremthix.com.gridview.domain.Pair;
+import com.sdremthix.com.gridview.domain.contracts.IGridDrawer;
+import com.sdremthix.com.gridview.domain.entities.LinePoint;
+import com.sdremthix.com.gridview.domain.entities.Pair;
 
 import java.util.Map;
 
@@ -34,7 +34,7 @@ public final class ObjectDraw extends View {
     private final Paint gridPaint = new Paint();
 
     @Nullable
-    private GridDrawer gridDrawer;
+    private IGridDrawer gridDrawer;
 
     public ObjectDraw(Context context) {
         super(context);
@@ -58,7 +58,7 @@ public final class ObjectDraw extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (this.gridDrawer != null && this.gridDrawer.isDrawGrid()) {
+        if (this.gridDrawer != null && this.gridDrawer.isDrawGridEnabled()) {
             drawGridOnCanvas(this.gridDrawer, canvas);
         }
 
@@ -77,7 +77,7 @@ public final class ObjectDraw extends View {
         this.bitmapImage = bitmapImage;
     }
 
-    public void drawGrid(@NonNull GridDrawer gridDrawer) {
+    public void drawGrid(@NonNull IGridDrawer gridDrawer) {
         this.gridDrawer = gridDrawer;
         gridPaint.setStrokeWidth(gridDrawer.getLineWidth());
         int color;
@@ -145,7 +145,7 @@ public final class ObjectDraw extends View {
         return true;
     }
 
-    private void drawGridOnCanvas(@NonNull final GridDrawer gridDrawer, final Canvas canvas) {
+    private void drawGridOnCanvas(@NonNull final IGridDrawer gridDrawer, final Canvas canvas) {
 
         final Map<LinePoint, Pair<GridLine, GridLine>> grid = gridDrawer.generateGrid(getWidth(), getHeight());
         //draw grid
@@ -157,7 +157,7 @@ public final class ObjectDraw extends View {
         }
 
 
-        if (gridDrawer.isSnapToGrid() && !isMoving) {
+        if (gridDrawer.isSnapToGridEnabled() && !isMoving) {
             final LinePoint updatedValues = gridDrawer.snapToGrid(mPosX, mPosY);
             mPosX = updatedValues.getXPos();
             mPosY = updatedValues.getYPos();

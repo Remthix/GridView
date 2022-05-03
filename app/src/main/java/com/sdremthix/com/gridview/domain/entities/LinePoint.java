@@ -1,7 +1,7 @@
-package com.sdremthix.com.gridview.domain;
+package com.sdremthix.com.gridview.domain.entities;
 
 /**
- * Single line point.
+ * Single line start/end point.
  */
 public final class LinePoint {
     private final float xPos;

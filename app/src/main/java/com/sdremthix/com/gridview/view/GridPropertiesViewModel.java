@@ -6,13 +6,14 @@ import androidx.lifecycle.ViewModel;
 
 import com.sdremthix.com.gridview.domain.GridDrawer;
 import com.sdremthix.com.gridview.domain.GridProperties;
+import com.sdremthix.com.gridview.domain.contracts.IGridDrawer;
 
 /**
  * GridProperties Android architecture ViewModel component.
  */
 public final class GridPropertiesViewModel extends ViewModel {
 
-    private final MutableLiveData<GridDrawer> gridDrawerMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<IGridDrawer> gridDrawerMutableLiveData = new MutableLiveData<>();
     public final MutableLiveData<Boolean> showGridEnabled = new MutableLiveData<>();
     public final MutableLiveData<Boolean> snapToGridEnabled = new MutableLiveData<>();
     public final MutableLiveData<Boolean> squareCellsEnabled = new MutableLiveData<>();
@@ -29,7 +30,7 @@ public final class GridPropertiesViewModel extends ViewModel {
         rows.setValue(gridProperties.getRows());
     }
 
-    public LiveData<GridDrawer> observeGridDrawer() {
+    public LiveData<IGridDrawer> observeGridDrawer() {
         return this.gridDrawerMutableLiveData;
     }
 

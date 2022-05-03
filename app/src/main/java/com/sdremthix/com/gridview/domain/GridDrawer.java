@@ -1,5 +1,10 @@
 package com.sdremthix.com.gridview.domain;
 
+import com.sdremthix.com.gridview.domain.algorithm.KDSearchTree;
+import com.sdremthix.com.gridview.domain.contracts.IGridDrawer;
+import com.sdremthix.com.gridview.domain.entities.LinePoint;
+import com.sdremthix.com.gridview.domain.entities.Pair;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -9,7 +14,7 @@ import java.util.Map;
 /**
  * Grid view component generator.
  */
-public final class GridDrawer {
+public final class GridDrawer implements IGridDrawer {
 
     private final GridProperties gridProperties;
 
@@ -53,11 +58,11 @@ public final class GridDrawer {
         return grid;
     }
 
-    public boolean isDrawGrid() {
+    public boolean isDrawGridEnabled() {
         return this.gridProperties.isDrawGrid();
     }
 
-    public boolean isSnapToGrid() {
+    public boolean isSnapToGridEnabled() {
         return this.gridProperties.isSnapToGrid();
     }
 

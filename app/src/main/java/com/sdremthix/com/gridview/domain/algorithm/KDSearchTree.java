@@ -1,4 +1,4 @@
-package com.sdremthix.com.gridview.domain;
+package com.sdremthix.com.gridview.domain.algorithm;
 
 import java.util.LinkedList;
 import java.util.List;
