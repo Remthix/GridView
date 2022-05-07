@@ -1,4 +1,4 @@
-package com.sdremthix.com.gridview.view;
+package com.sdremthix.com.gridview;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -14,17 +14,16 @@ import androidx.annotation.Nullable;
 
 import com.sdremthix.com.gridview.domain.GridLine;
 import com.sdremthix.com.gridview.domain.contracts.IGridDrawer;
+import com.sdremthix.com.gridview.domain.contracts.IGridView;
 import com.sdremthix.com.gridview.domain.entities.LinePoint;
 import com.sdremthix.com.gridview.domain.entities.Pair;
 
 import java.util.Map;
 
-public final class ObjectDraw extends View {
-    public static final String TAG = "SRKI";
+public final class ObjectDraw extends View implements IGridView {
     private float mPosX, mPosY, xMove, yMove;
     private int pointerID;
     private boolean isMoving;
-
 
     @Nullable
     private Bitmap bitmapImage;
@@ -51,11 +50,6 @@ public final class ObjectDraw extends View {
         init();
     }
 
-    public ObjectDraw(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init();
-    }
-
     @Override
     protected void onDraw(Canvas canvas) {
         if (this.gridDrawer != null && this.gridDrawer.isDrawGridEnabled()) {
@@ -65,7 +59,6 @@ public final class ObjectDraw extends View {
         if (bitmapImage != null) {
             canvas.drawBitmap(bitmapImage, mPosX, mPosY, this.bitmapPaint);
         }
-
     }
 
     private void init() {

@@ -13,7 +13,7 @@
         android:layout_centerHorizontal="true"
         android:text="Grid" />
 
-    <com.sdremthix.com.gridview.view.ObjectDraw
+    <com.sdremthix.com.gridview.ObjectDraw
         android:id="@+id/draw_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
