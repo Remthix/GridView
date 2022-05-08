@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">GridView</string>
+
+    <string name="show_grid">Show Grid</string>
+    <string name="columns">Columns</string>
+    <string name="rows">Rows</string>
+    <string name="square_cells">Square cells</string>
+    <string name="snap_to_grid">Snap to grid</string>
+    <string name="render_to_image">Render to image</string>
+    <string name="close">Close</string>
+    <string name="apply">Apply</string>
 </resources>

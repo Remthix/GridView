@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:checked="@={viewModel.showGridEnabled}"
-            android:text="Show Grid" />
+            android:text="@string/show_grid" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -38,7 +38,7 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Columns" />
+                android:text="@string/columns" />
         </LinearLayout>
 
         <LinearLayout
@@ -58,7 +58,7 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Rows" />
+                android:text="@string/rows" />
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatCheckBox
@@ -66,21 +66,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:checked="@={viewModel.squareCellsEnabled}"
-            android:text="Square cells" />
+            android:text="@string/square_cells" />
 
         <androidx.appcompat.widget.AppCompatCheckBox
             android:id="@+id/chk_snap_to_grid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:checked="@={viewModel.snapToGridEnabled}"
-            android:text="Snap to grid" />
+            android:text="@string/snap_to_grid" />
 
 
         <androidx.appcompat.widget.AppCompatCheckBox
             android:id="@+id/chk_render_to_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Render to image" />
+            android:text="@string/render_to_image" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -91,14 +91,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Close" />
+                android:text="@string/close" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_dialog_apply"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Apply" />
+                android:text="@string/apply" />
         </LinearLayout>
 
 
