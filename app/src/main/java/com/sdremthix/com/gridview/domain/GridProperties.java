@@ -27,15 +27,15 @@ public final class GridProperties {
     public GridProperties(int columns, int rows, boolean drawGrid, boolean snapToGrid, boolean renderToImage, boolean squareCells, GridPaint gridPaint) throws IllegalArgumentException {
 
         if (columns <= 0 || rows <= 0) {
-            throw new IllegalArgumentException("Grid Properties: number for either rows or columns must be greater than 0!");
+            throw new IllegalArgumentException(GridProperties.class.getSimpleName() + ": number for either rows or columns must be greater than 0!");
         }
 
         if (columns > MAX_COLUMNS) {
-            throw new IllegalArgumentException("Grid Properties: Number of columns cannot exceed: " + MAX_COLUMNS);
+            throw new IllegalArgumentException(GridProperties.class.getSimpleName() + ": Number of columns cannot exceed: " + MAX_COLUMNS);
         }
 
         if (rows > MAX_ROWS) {
-            throw new IllegalArgumentException("Grid Properties: Number of rows cannot exceed: " + MAX_ROWS);
+            throw new IllegalArgumentException(GridProperties.class.getSimpleName() + ": Number of rows cannot exceed: " + MAX_ROWS);
         }
         this.columns = columns;
         this.rows = rows;
