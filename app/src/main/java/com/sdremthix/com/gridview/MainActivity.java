@@ -20,7 +20,6 @@ import com.sdremthix.com.gridview.domain.GridProperties;
 import com.sdremthix.com.gridview.search.algorithm.KDSearchTree;
 import com.sdremthix.com.gridview.view.GridPropertiesDialog;
 import com.sdremthix.com.gridview.view.GridPropertiesViewModel;
-import com.sdremthix.com.gridview.view.ObjectDraw;
 
 import java.util.Arrays;
 
