@@ -8,7 +8,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
@@ -38,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
         findViewById(R.id.btn_grid_properties).setOnClickListener(view -> {
             //Toggle dialog display
-            toggleGridPropertiesDisplay(objectDraw);
+            toggleGridPropertiesDisplay();
         });
 
 
@@ -73,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d("SRKI", "Najbliza tacka: " + kdSearchTree.findNearestNeighbor(new KDSearchTree.NodePoint(Arrays.asList(40f, 40f))));
     }
 
-    private void toggleGridPropertiesDisplay(@NonNull final ObjectDraw objectDraw) {
+    private void toggleGridPropertiesDisplay() {
 
         final GridPropertiesDialog gridPropertiesDialog = new GridPropertiesDialog();
 
